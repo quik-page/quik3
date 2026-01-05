@@ -3,6 +3,7 @@ import { getValue, setValue } from "./storage"
 import MIcon from "../components/MIcon.vue";
 import { checkUrl } from "./util";
 import FavIcon from "../components/FavIcon.vue";
+import { sugCt } from "./searchsug";
 
 type SearchEngines = { [key: string]: string };
 
@@ -105,7 +106,7 @@ interface Sug{
 }
 
 const sugCreators:SugCreator[]=[{
-    check:()=>true,
+    check:(val)=>!!val,
     create(val,get,cb){
         let s=get();
         s.unshift({
@@ -130,17 +131,25 @@ function checkVal(val:string):ValParser{
 }
 
 function geneSug(val:string,cb:(sugs:Sug[])=>void){
+    let aborted=false;
     let sugs:Sug[]=[];
     let cs:SugCreator[]=[];
     for(let c of sugCreators){
         if(c.check(val)){
-            c.create(val,()=>sugs,cb);
+            c.create(val,()=>sugs,(nsugs)=>{
+                if(aborted) return;
+                // 使用复制数组的方式防止数据被修改
+                let copiedSugs=[...nsugs];
+                cb(copiedSugs);
+                // cb(nsugs);
+            });
             cs.push(c);
         }
     }
     return {
         abort(){
             cs.forEach(c=>c.interrupt?.());
+            aborted=true;
         }
     }
 }
@@ -153,4 +162,7 @@ function registerValParser(p:ValParser){
     valParsers.unshift(p);
 }
 
-export {search,getUserEngines,getUserNowEngine,defEngines,setNowEngine,setUserEngines,checkVal,geneSug,registerSugCreator,registerValParser};
+registerSugCreator(sugCt);
+
+export { search, getUserEngines, getUserNowEngine, defEngines, setNowEngine, setUserEngines, checkVal, geneSug, registerSugCreator, registerValParser };
+export type { SugCreator,Sug, ValParser };

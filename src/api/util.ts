@@ -69,4 +69,30 @@ function debounce<T extends (...args: any[]) => any>(fn: T, delay: number) {
     };
 }
 
-export { getRandomCode, checkUrl, loadimg, getFavicon, debounce };
+function jsonp(url: string, cb: (data: any) => void, errcb: () => void) {
+    const callbackName = "jsonp_callback_" + Math.round(100000 * Math.random());
+    (window as any)[callbackName] = function (data: any) {
+        delete (window as any)[callbackName];
+        document.body.removeChild(script);
+        cb(data);
+    };
+
+    const script = document.createElement("script");
+    script.src = url + (url.indexOf("?") >= 0 ? "&" : "?") + "callback=" + callbackName;
+    script.onerror = function () {
+        delete (window as any)[callbackName];
+        document.body.removeChild(script);
+        errcb();
+    };
+    document.body.appendChild(script);
+    return {
+        abort(){
+            // 这并不能阻止请求，反而会导致一堆报错
+            // delete (window as any)[callbackName];
+            // document.body.removeChild(script);
+            errcb();
+        }
+    }
+}
+
+export { getRandomCode, checkUrl, loadimg, getFavicon, debounce, jsonp };
