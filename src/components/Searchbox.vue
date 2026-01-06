@@ -11,6 +11,7 @@ let engineIcon=ref(h(FavIcon,{url:getUserNowEngine()}));
 let tobtnIcon=ref(h(MIcon,{name:"search"}));
 let sugs=ref<Sug[]>([]);
 let activeSugIndex=ref(-1);
+let activeSugId=ref('');
 let listRef=ref<HTMLDivElement>();
 
 watch(activeSugIndex,async (newItem)=>{
@@ -33,11 +34,15 @@ function onKeyDown(e: KeyboardEvent){
         e.preventDefault();
         if(activeSugIndex.value<sugs.value.length-1){
             activeSugIndex.value++;
+            let sy=sugs.value[activeSugIndex.value];
+            activeSugId.value=sy?sy.id||'':'';
         }
     }else if(e.key=='ArrowUp'){
         e.preventDefault();
         if(activeSugIndex.value>=0){
             activeSugIndex.value--;
+            let sy=sugs.value[activeSugIndex.value];
+            activeSugId.value=sy?sy.id||'':'';
         }
     }else if(e.key=="ArrowRight"){
         if(activeSugIndex.value>=0){
@@ -55,6 +60,12 @@ let geSug=debounce(function(val:string){
     lastgene=geneSug(val,(nsugs)=>{
         sugs.value=nsugs;
         activeSugIndex.value=-1;
+        for(let i=0;i<nsugs.length;i++){
+            if((nsugs[i] as Sug).id==activeSugId.value){
+                activeSugIndex.value=i;
+                break;
+            }
+        }
     })
 },100);
 
@@ -108,8 +119,8 @@ function onBlur(){
         <div class="morelist" ref="listRef">
             <div :class="{
                 item:true,
-                active:activeSugIndex==index
-            }" v-for="(sug,index) in sugs" @click="sug.enter(sug.text)">
+                active:activeSugId==sug.id
+            }" v-for="(sug) in sugs" :key="sug.id" @click="sug.enter(sug.text)">
                 <div class="icon" v-if="typeof sug.icon=='string'" v-html="sug.icon"></div>
                 <div class="icon" v-else>
                     <component :is="sug.icon()"/>

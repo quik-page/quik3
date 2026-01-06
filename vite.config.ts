@@ -19,13 +19,6 @@ export default defineConfig({
           }
           return 'assets/[name].[ext]';
         },
-        // 2. 这里的重点：手动拆分第三方库
-        manualChunks: {
-            vue:['vue'],
-            localforage:['localforage']
-        },
-        // 3. 修改分包的文件名格式，使其更清晰
-        chunkFileNames: 'assets/[name].js',
       }
     },
     

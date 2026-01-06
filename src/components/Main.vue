@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Engines from './Engines.vue';
 import Iconbar from './Iconbar.vue';
-import Link from './Link.vue';
+import Link from './Links.vue';
 import Logo from './Logo.vue';
 import Searchbox from './Searchbox.vue';
 
@@ -33,7 +33,7 @@ import Searchbox from './Searchbox.vue';
             width: 100%;
             height: calc(100% - 80px);
         }
-        .searchboxpadding{
+        .searchpadding{
             height: 60px;
             width: 100%;
         }

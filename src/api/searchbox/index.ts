@@ -1,8 +1,8 @@
 import { h, type VNode } from "vue";
-import { getValue, setValue } from "./storage"
-import MIcon from "../components/MIcon.vue";
-import { checkUrl } from "./util";
-import FavIcon from "../components/FavIcon.vue";
+import { getValue, setValue } from "../storage"
+import MIcon from "../../components/MIcon.vue";
+import { checkUrl, getRandomCode } from "../util";
+import FavIcon from "../../components/FavIcon.vue";
 import { sugCt } from "./searchsug";
 
 type SearchEngines = { [key: string]: string };
@@ -102,7 +102,8 @@ interface SugCreator{
 interface Sug{
     icon:string|(()=>VNode),
     text:string,
-    enter:(val:string)=>void
+    enter:(val:string)=>void,
+    id?:string
 }
 
 const sugCreators:SugCreator[]=[{
@@ -138,6 +139,11 @@ function geneSug(val:string,cb:(sugs:Sug[])=>void){
         if(c.check(val)){
             c.create(val,()=>sugs,(nsugs)=>{
                 if(aborted) return;
+                for(let i=0;i<nsugs.length;i++){
+                    if(typeof (nsugs[i] as Sug).id== "undefined"){
+                        (nsugs[i] as Sug).id=getRandomCode();
+                    }
+                }
                 // 使用复制数组的方式防止数据被修改
                 let copiedSugs=[...nsugs];
                 cb(copiedSugs);
