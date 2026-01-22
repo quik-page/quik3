@@ -1,11 +1,10 @@
-import { h, type VNode } from "vue";
+import { h } from "vue";
 import { getValue, setValue } from "../storage"
 import MIcon from "../../components/MIcon.vue";
 import { checkUrl, getRandomCode } from "../util";
 import FavIcon from "../../components/FavIcon.vue";
 import { sugCt } from "./searchsug";
-
-type SearchEngines = { [key: string]: string };
+import type { SearchEngines, SugCreator,Sug, ValParser } from "../types";
 
 const defEngines: SearchEngines = {
     google:"https://www.google.com/search?q=",
@@ -66,14 +65,6 @@ function setUserEngines(engines:{[key:string]:string}){
         setValue("searchbox-nowengine",Object.keys(engines)[0]);
     }
 }
-
-interface ValParser{
-    check(val:string):boolean,
-    icon:string|(()=>VNode),
-    tobtn:string|(()=>VNode),
-    enter(val:string):void
-}
-
 const valParsers:ValParser[]=[{
     check:checkUrl,
     icon:()=>h(MIcon,{name:"earth"}),
@@ -92,19 +83,6 @@ const valParsers:ValParser[]=[{
         search(val);
     }
 }];
-
-interface SugCreator{
-    check(val:string):boolean,
-    create(val:string,get:()=>Sug[],cb:(sugs:Sug[])=>void):void,
-    interrupt?():void
-}
-
-interface Sug{
-    icon:string|(()=>VNode),
-    text:string,
-    enter:(val:string)=>void,
-    id?:string
-}
 
 const sugCreators:SugCreator[]=[{
     check:(val)=>!!val,

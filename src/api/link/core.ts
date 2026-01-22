@@ -1,18 +1,9 @@
+import getEventHandle from "../getEventHandle";
 import { getValue, removeValue, setValue } from "../storage";
+import type { Link, LinkGroup } from "../types";
 
+let ev=getEventHandle();
 const defSym = Symbol("default");
-
-interface Link {
-    name: string;
-    url: string;
-    icon?: string;
-    id?: string;
-}
-
-interface LinkGroup {
-    id: string;
-    name: string;
-}
 
 async function getLinks(groupId:string|symbol):Promise<Link[]> {
     let links;
@@ -34,6 +25,10 @@ async function setLinks(groupId:string|symbol, links:Link[]) {
     }else{
         await setValue(`links-${groupId as string}`, links,true);
     }
+    ev.emit("linkchange",{
+        groupId,
+        links
+    })
 }
 
 function getGroupList():LinkGroup[]{
@@ -41,6 +36,7 @@ function getGroupList():LinkGroup[]{
 }
 
 function setGroupList(groups:LinkGroup[]){
+    ev.emit("groupchange",{groups});
     return setValue("links-groups", groups);
 }
 
@@ -49,12 +45,11 @@ async function removeGroupStore(groupId:string){
 }
 
 export {
-    type Link,
-    type LinkGroup,
     defSym,
     getLinks,
     setLinks,
     getGroupList,
     setGroupList,
-    removeGroupStore
+    removeGroupStore,
+    ev
 }

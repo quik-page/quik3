@@ -1,5 +1,7 @@
+import { setValue } from "../storage";
+import type { Link, LinkGroup } from "../types";
 import { getRandomCode } from "../util";
-import { getGroupList, getLinks, removeGroupStore, setGroupList, setLinks, type Link, type LinkGroup } from "./core";
+import { getGroupList, getLinks, removeGroupStore, setGroupList, setLinks } from "./core";
 
 async function addLink(link:Link, groupId:string|symbol, index?:number){
     await addLinks([link], groupId, index);
@@ -15,15 +17,23 @@ async function addLinks(links:Link[], groupId:string|symbol, index?:number){
     await setLinks(groupId, curLinks);
 }
 
-async function editLink(groupId:string|symbol, index:number, newLink:Link){
+async function editLink(groupId:string|symbol, linkId:string, newLink:Link){
     let curLinks=await getLinks(groupId);
-    curLinks[index]=newLink;
+    for(let i=0;i<curLinks.length;i++){
+        if((curLinks[i] as Link).id==linkId){
+            curLinks[i]=newLink;
+            newLink.id=linkId;
+            break;
+        }
+    }
     await setLinks(groupId, curLinks);
 }
 
-async function moveLink(fromGroupId:string|symbol, fromIndex:number, toGroupId:string|symbol, toIndex:number){
+async function moveLink(fromGroupId:string|symbol, fromLinkId:string, toGroupId:string|symbol, toIndex:number){
     if(fromGroupId==toGroupId){
         let curLinks=await getLinks(fromGroupId);
+        let fromIndex=curLinks.findIndex((link:Link)=>link.id==fromLinkId);
+        if(fromIndex==-1) return;
         if(fromIndex>curLinks.length-1||toIndex>curLinks.length-1){
             return;
         }
@@ -33,6 +43,8 @@ async function moveLink(fromGroupId:string|symbol, fromIndex:number, toGroupId:s
     }else{
         let fromLinks=await getLinks(fromGroupId);
         let toLinks=await getLinks(toGroupId);
+        let fromIndex=fromLinks.findIndex((link:Link)=>link.id==fromLinkId);
+        if(fromIndex==-1) return;
         if(fromIndex>fromLinks.length-1||toIndex>toLinks.length-1){
             return;
         }
@@ -43,18 +55,21 @@ async function moveLink(fromGroupId:string|symbol, fromIndex:number, toGroupId:s
     }
 }
 
-async function deleteLink(groupId:string|symbol, index:number){
+async function deleteLink(groupId:string|symbol, linkId:string){
     let curLinks=await getLinks(groupId);
+    let index=curLinks.findIndex((link:Link)=>link.id==linkId);
+    if(index==-1) return;
     curLinks.splice(index,1);
     await setLinks(groupId, curLinks);
 }
 
-function addGroup(name:string,index?:number){
+async function addGroup(name:string,index?:number){
     let curGroups=getGroupList();
     if(typeof index=="undefined") index=curGroups.length;
     let newGroup={id:getRandomCode(),name,links:[]};
     curGroups.splice(index,0,newGroup);
     setGroupList(curGroups);
+    await setValue('links-'+newGroup.id,[],true);
 }
 
 function editGroup(id:string, newName:string){

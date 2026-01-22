@@ -5,12 +5,13 @@
 </template>
 
 <style lang="scss" scoped>
-.loading-g{
+.loading-g {
     width: 100px;
     height: 2px;
     position: relative;
     overflow: hidden;
-    div{
+
+    div {
         height: 2px;
         width: 100px;
         background-color: #000;
@@ -24,7 +25,7 @@
     0% {
         margin-left: -100px;
     }
-    
+
     100% {
         margin-left: 200px;
     }

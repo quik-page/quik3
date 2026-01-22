@@ -95,4 +95,22 @@ function jsonp(url: string, cb: (data: any) => void, errcb: () => void) {
     }
 }
 
-export { getRandomCode, checkUrl, loadimg, getFavicon, debounce, jsonp };
+function getLocalFiles(one=true){
+    return new Promise<FileList>((resolve, reject) => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        if(!one){
+            input.multiple = true;
+        }
+        input.onchange = () => {
+            if(input.files && input.files.length > 0){
+                resolve(input.files);
+            }else{
+                reject();
+            }
+        };
+        input.click();
+    });
+}
+
+export { getRandomCode, checkUrl, loadimg, getFavicon, debounce, jsonp, getLocalFiles };

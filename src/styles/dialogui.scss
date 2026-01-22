@@ -1,0 +1,88 @@
+.dialog-ui{
+    line-height: 30px;
+    *{
+        transition: all .2s;
+    }
+    .title{
+        font-size: 24px;
+        padding: 10px 0;
+    }
+    input{
+        &[type="text"],
+        &[type="password"],
+        &[type="email"],
+        &[type="url"],
+        &[type="search"],
+        &[type="tel"],
+        &[type="number"]
+        {
+            height: 24px;
+            width: 250px;
+            border: 0;
+            outline: 0;
+            border-bottom: #e6e6e6 solid 1px;
+            background-color: transparent;
+            color: inherit;
+            padding: 2px;
+            transition: all .2s;
+            &:focus{
+                border-bottom: #09f solid 1px;
+            }
+        }
+    }
+    .btn-g{
+        float: right;
+        padding-top: 10px;
+    }
+    .btn{
+        min-width: 60px;
+        line-height: 30px;
+        border: 0;
+        outline: 0;
+        cursor: pointer;
+        box-shadow: #aaa 0 1px 2px;
+        background-color: #eee;
+        color: #333;
+        border-radius: 2px;
+        display: inline-block;
+        text-align: center;
+        font-size: 12px;
+        margin: 0 4px;
+        &:hover{
+            background-color: #ddd;
+        }
+        &:active{
+            background-color: #aaa;
+        }
+        &.ok{
+            background-color: #09f;
+            color: #fff;
+            &:hover{
+                background-color: #06f;
+            }
+            &:active{
+                background-color: #0af;
+            }
+        }
+    }
+    .input-g{
+        &>*{
+            display: inline-block;
+        }
+        .label{
+            min-width: 3em;
+            text-align: center;
+        }
+        input{
+            width: 20em;
+        }
+        &.hbtn{
+            input{
+                width: 15em;
+            }
+            .btn{
+                width: 4em;
+            }
+        }
+    }
+}

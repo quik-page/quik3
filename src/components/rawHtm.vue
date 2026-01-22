@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, watchEffect } from 'vue';
-    const htm = ref('');
-    const props = defineProps<{htm:string}>();
+import { ref, watchEffect } from 'vue';
+const htm = ref('');
+const props = defineProps<{ htm: string }>();
 
-    watchEffect(()=>{
-        htm.value=props.htm;
-    })
+watchEffect(() => {
+    htm.value = props.htm;
+})
 </script>

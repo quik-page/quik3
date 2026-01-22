@@ -13,24 +13,25 @@
 <script lang="ts" setup>
 import { ref, watchEffect } from 'vue'
 import { getFavicon } from '../api/util';
+import type { Link } from '../api/types';
 
 const imgsrc = ref('');
 const name = ref('');
 const url = ref('');
-const props = defineProps<{ url: string, name: string, icon?: string }>();
+const props = defineProps<{ link:Link }>();
 
 watchEffect(() => {
-    if (props.icon) {
-        imgsrc.value = props.icon;
+    if (props.link.icon) {
+        imgsrc.value = props.link.icon;
     } else {
-        getFavicon(props.url, (faviconUrl) => {
+        getFavicon(props.link.url, (faviconUrl) => {
             if (!faviconUrl) return;
             imgsrc.value = faviconUrl as string;
         })
     }
 
-    name.value = props.name;
-    url.value = props.url;
+    name.value = props.link.name;
+    url.value = props.link.url;
 })
 
 </script>
@@ -60,20 +61,21 @@ watchEffect(() => {
         }
     }
 
-    .name{
+    .name {
         font-size: 12px;
         text-align: center;
     }
-    &:hover{
+
+    &:hover {
         .link-icon {
-            box-shadow: 0 0 5px rgba(0,0,0,.1);
+            box-shadow: 0 0 5px rgba(0, 0, 0, .1);
             background-color: #e7e7e7;
         }
     }
 
-    &:active{
-        .link-icon img{
-            transform:scale(.8);
+    &:active {
+        .link-icon img {
+            transform: scale(.8);
         }
     }
 }

@@ -6,124 +6,125 @@ import FavIcon from './FavIcon.vue';
 import { debounce } from '../api/util';
 import RawHtm from './rawHtm.vue';
 
-let inpval=ref('');
-let engineIcon=ref(h(FavIcon,{url:getUserNowEngine()}));
-let tobtnIcon=ref(h(MIcon,{name:"search"}));
-let sugs=ref<Sug[]>([]);
-let activeSugIndex=ref(-1);
-let activeSugId=ref('');
-let listRef=ref<HTMLDivElement>();
+let inpval = ref('');
+let engineIcon = ref(h(FavIcon, { url: getUserNowEngine() }));
+let tobtnIcon = ref(h(MIcon, { name: "search" }));
+let sugs = ref<Sug[]>([]);
+let activeSugIndex = ref(-1);
+let activeSugId = ref('');
+let listRef = ref<HTMLDivElement>();
 
-watch(activeSugIndex,async (newItem)=>{
-    if(newItem<0)return;
+watch(activeSugIndex, async (newItem) => {
+    if (newItem < 0) return;
     await nextTick();
-    const activeItem=listRef.value?.children[newItem];
-    if(typeof activeItem=='undefined')return;
-    activeItem.scrollIntoView({behavior:"smooth",block:"center"});
+    const activeItem = listRef.value?.children[newItem];
+    if (typeof activeItem == 'undefined') return;
+    activeItem.scrollIntoView({ behavior: "smooth", block: "center" });
 })
 
-function enter(){
-    const vp=checkVal(inpval.value);
+function enter() {
+    const vp = checkVal(inpval.value);
     vp.enter(inpval.value);
 }
 
-function onKeyDown(e: KeyboardEvent){
-    if(e.key=='Enter'){
+function onKeyDown(e: KeyboardEvent) {
+    if (e.key == 'Enter') {
         enter();
-    }else if(e.key=='ArrowDown'){
+    } else if (e.key == 'ArrowDown') {
         e.preventDefault();
-        if(activeSugIndex.value<sugs.value.length-1){
+        if (activeSugIndex.value < sugs.value.length - 1) {
             activeSugIndex.value++;
-            let sy=sugs.value[activeSugIndex.value];
-            activeSugId.value=sy?sy.id||'':'';
+            let sy = sugs.value[activeSugIndex.value];
+            activeSugId.value = sy ? sy.id || '' : '';
         }
-    }else if(e.key=='ArrowUp'){
+    } else if (e.key == 'ArrowUp') {
         e.preventDefault();
-        if(activeSugIndex.value>=0){
+        if (activeSugIndex.value >= 0) {
             activeSugIndex.value--;
-            let sy=sugs.value[activeSugIndex.value];
-            activeSugId.value=sy?sy.id||'':'';
+            let sy = sugs.value[activeSugIndex.value];
+            activeSugId.value = sy ? sy.id || '' : '';
         }
-    }else if(e.key=="ArrowRight"){
-        if(activeSugIndex.value>=0){
-            const sug=sugs.value[activeSugIndex.value] as Sug;
-            inpval.value=sug.text;
+    } else if (e.key == "ArrowRight") {
+        if (activeSugIndex.value >= 0) {
+            const sug = sugs.value[activeSugIndex.value] as Sug;
+            inpval.value = sug.text;
             onInput();
         }
     }
 }
 
-let lastgene:ReturnType<typeof geneSug>|undefined;
-let geSug=debounce(function(val:string){
+let lastgene: ReturnType<typeof geneSug> | undefined;
+let geSug = debounce(function (val: string) {
     lastgene?.abort();
-    sugs.value=[];
-    lastgene=geneSug(val,(nsugs)=>{
-        sugs.value=nsugs;
-        activeSugIndex.value=-1;
-        for(let i=0;i<nsugs.length;i++){
-            if((nsugs[i] as Sug).id==activeSugId.value){
-                activeSugIndex.value=i;
+    sugs.value = [];
+    lastgene = geneSug(val, (nsugs) => {
+        sugs.value = nsugs;
+        activeSugIndex.value = -1;
+        for (let i = 0; i < nsugs.length; i++) {
+            if ((nsugs[i] as Sug).id == activeSugId.value) {
+                activeSugIndex.value = i;
                 break;
             }
         }
     })
-},100);
+}, 100);
 
-function onInput(){
-    const vp=checkVal(inpval.value);
-    if(typeof vp.icon=='string'){
-        engineIcon.value=h(RawHtm,{htm:vp.icon});
-    }else{
-        engineIcon.value=vp.icon();
+function onInput() {
+    const vp = checkVal(inpval.value);
+    if (typeof vp.icon == 'string') {
+        engineIcon.value = h(RawHtm, { htm: vp.icon });
+    } else {
+        engineIcon.value = vp.icon();
     }
-    if(typeof vp.tobtn=='string'){
-        tobtnIcon.value=h(RawHtm,{htm:vp.tobtn});
-    }else{
-        tobtnIcon.value=vp.tobtn();
+    if (typeof vp.tobtn == 'string') {
+        tobtnIcon.value = h(RawHtm, { htm: vp.tobtn });
+    } else {
+        tobtnIcon.value = vp.tobtn();
     }
     geSug(inpval.value);
 }
 
-let isfocus=ref(false);
+let isfocus = ref(false);
 
-function onFocus(){
-    isfocus.value=true;
+function onFocus() {
+    isfocus.value = true;
 }
 
-function onBlur(){
-    isfocus.value=false;
+function onBlur() {
+    isfocus.value = false;
 }
 
 </script>
 
 <template>
     <div :class="{
-        searchcover:true,
-        show:isfocus
+        searchcover: true,
+        show: isfocus
     }"></div>
     <div :class="{
-        searchbox:true,
-        focus:isfocus
+        searchbox: true,
+        focus: isfocus
     }">
         <div class="box">
             <div class="engine">
-                <component :is="engineIcon"/>
+                <component :is="engineIcon" />
             </div>
             <div class="inputbox">
-                <input type="search" v-model="inpval" @blur="onBlur" @focus="onFocus" @keydown="onKeyDown" @input="onInput" placeholder="搜索或输入网址"/>
+                <input type="search" v-model="inpval" @blur="onBlur" @focus="onFocus" @keydown="onKeyDown"
+                    @input="onInput" placeholder="搜索或输入网址" />
             </div>
             <div class="tobtn" @click="enter">
-                <component :is="tobtnIcon"/>
+                <component :is="tobtnIcon" />
             </div>
         </div>
         <div class="morelist" ref="listRef">
             <div :class="{
-                item:true,
-                active:activeSugId==sug.id
+                item: true,
+                active: activeSugId == sug.id
             }" v-for="(sug) in sugs" :key="sug.id" @click="sug.enter(sug.text)">
-                <div class="icon" v-if="typeof sug.icon=='string'" v-html="sug.icon"></div>
+                <div class="icon" v-if="typeof sug.icon == 'string'" v-html="sug.icon"></div>
                 <div class="icon" v-else>
-                    <component :is="sug.icon()"/>
+                    <component :is="sug.icon()" />
                 </div>
                 <div class="text">{{ sug.text }}</div>
             </div>
@@ -132,7 +133,7 @@ function onBlur(){
 </template>
 
 <style lang="scss">
-.searchbox{
+.searchbox {
     max-width: 600px;
     height: 40px;
     width: calc(100% - 10px);
@@ -144,29 +145,35 @@ function onBlur(){
     left: 50%;
     transform: translateX(-50%);
     overflow: hidden;
-    .box{
+
+    .box {
         width: 100%;
         height: 40px;
-        .engine{
+
+        .engine {
             width: 40px;
             height: 40px;
             float: left;
-            img{
+
+            img {
                 width: 20px;
                 height: 20px;
                 margin: 10px 10px;
             }
-            .m-icon{
+
+            .m-icon {
                 width: 20px;
                 height: 20px;
                 margin: 10px;
             }
         }
-        .inputbox{
+
+        .inputbox {
             width: calc(100% - 80px);
             height: 40px;
             float: left;
-            input{
+
+            input {
                 width: 100%;
                 height: 40px;
                 border: 0;
@@ -175,13 +182,14 @@ function onBlur(){
                 font-family: Consolas;
             }
         }
-        .tobtn{
+
+        .tobtn {
             float: left;
             width: 40px;
             height: 40px;
             cursor: pointer;
 
-            .m-icon{
+            .m-icon {
                 width: 20px;
                 height: 20px;
                 margin: 10px;
@@ -190,33 +198,39 @@ function onBlur(){
     }
 }
 
-.searchbox.focus{
+.searchbox.focus {
     height: auto;
 }
 
-.morelist{
-    width:100%;
+.morelist {
+    width: 100%;
     max-height: calc(60vh - 120px);
     overflow-y: auto;
-    .item{
-        width:calc(100% - 6px);
+
+    .item {
+        width: calc(100% - 6px);
         height: 30px;
         border-radius: 5px;
         margin: 3px;
-        &:hover,&.active{
+
+        &:hover,
+        &.active {
             background-color: #f4f4f4;
         }
-        .icon{
+
+        .icon {
             width: 30px;
             height: 30px;
             float: left;
-            .m-icon{
+
+            .m-icon {
                 width: 16px;
                 height: 16px;
                 margin: 7px;
             }
         }
-        .text{
+
+        .text {
             float: left;
             width: calc(100% - 30px);
             line-height: 30px;
@@ -228,19 +242,19 @@ function onBlur(){
     }
 }
 
-.searchcover{
+.searchcover {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s;
 }
 
-.searchcover.show{
+.searchcover.show {
     opacity: 1;
     pointer-events: auto;
 }

@@ -7,69 +7,83 @@ function getValue(key:string,useidb=false){
     let keys=key.split("-");
     let t=storage;
     for(let k of keys){
-        if(typeof t!="object"||t["^type"]=="idb"){
+        t=t[k];
+        if(typeof t!="object"){
             return null;
         }
-        t=t[k];
     }
     if(useidb){
-        if(typeof t!="object"||t["^type"]!="idb"){
-            throw new Error(key+" is not a idb type.")
+        if(t["-t"]!=="idb"){
+            throw new Error(key+" is not a idb type.");
         }
-        return localforage.getItem(t.hash);
+        return localforage.getItem(t['-v']);
     }else{
-        return t;
+        return t['-v'];
     }
 }
 
 function setValue(key:string,value:any,useidb=false){
     let keys=key.split("-");
     let t=storage;
-    for(let i=0;i<=keys.length;i++){
+    for(let i=0;i<keys.length;i++){
         let k=keys[i] as string;
         if(typeof t[k]=="undefined"){
             t[k]={};
-        }else if(typeof t[k]!="object"||t[k]["^type"]=="idb"){
+        }else if(typeof t[k]!="object"){
+            // I can assign it's impossible to reach here.
+            console.assert(false,"setValue reach not a object")
             throw new Error("Cannot break a value of not object to set at "+key);
         }
         t=t[k];
     }
-    let ki=keys[keys.length-1] as string;
     if(useidb){
-        let hash=getRandomCode();
-        t[ki].hash=hash;
-        t[ki]["^type"]="idb";
-        return localforage.setItem(hash,value);
+        if(t["-t"]!=="idb"){
+            t["-t"]="idb";
+            t["-v"]=getRandomCode();
+            save();   
+        }
+        return localforage.setItem(t["-v"],value);
+    }else{
+        t["-v"]=value;
+        save();
     }
-    save();
 }
 
 function removeValue(key:string,useidb=false){
     let keys=key.split("-");
     let t=storage;
-    for(let i=0;i<=keys.length;i++){
+    for(let i=0;i<keys.length-1;i++){
         let k=keys[i] as string;
-        if(typeof t[k]=="undefined"){
-            return;
-        }else if(typeof t[k]!="object"||t[k]["^type"]=="idb"){
+        if(typeof t[k]!="object"){
             return;
         }
         t=t[k];
     }
     let ki=keys[keys.length-1] as string;
+    if(typeof t[ki]!="object")return;
     if(useidb){
-        if(t[ki]&&t[ki]["^type"]=="idb"){
-            let hash=t[ki].hash;
-            delete t[ki];
+        if(t["-t"]=="idb"){
+            let hash=t[ki]["-v"];
+            delete t[ki]["-t"];
+            delete t[ki]["-v"];
+            if(Object.keys(t[ki]).length==0){
+                delete t[ki];
+            }
             save();
             return localforage.removeItem(hash);
         }else{
-            delete t[ki];
+            delete t[ki]["-v"];
+            if(Object.keys(t[ki]).length==0){
+                delete t[ki];
+            }
             save();
             return Promise.resolve();
         }
     }else{
-        delete t[ki];
+        delete t[ki]["-v"];
+        if(Object.keys(t[ki]).length==0){
+            delete t[ki];
+        }
         save();
     }
 }
@@ -83,6 +97,10 @@ function save(){
         },100);
     }
 }
+
+window.getValue=getValue;
+window.setValue=setValue;
+window.removeValue=removeValue;
 
 export {
     getValue,
