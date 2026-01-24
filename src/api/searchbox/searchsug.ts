@@ -1,7 +1,7 @@
 import { h } from "vue";
 import { search, type SugCreator } from ".";
 import { checkUrl, jsonp } from "../util";
-import MIcon from "../../components/MIcon.vue";
+import MIcon from "../../components/utils/MIcon.vue";
 
 // let lsfetch:ReturnType<typeof jsonp>|undefined=void 0;
 const sugCt: SugCreator = {

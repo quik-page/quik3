@@ -54,6 +54,16 @@ interface LinkEditCBEvent{
     index:number
 } 
 
+interface IconItem {
+    content: string|VNode;
+    show:boolean;
+    important:boolean;
+    id: string;
+    click?:()=>void;
+    dblclick?:()=>void;
+    hover?:()=>void;
+}
+
 export type {
     MenuItem,
     VNode,
@@ -64,6 +74,8 @@ export type {
     SugCreator,
     Sug,
     EventHandle,
-    LinkEditCBEvent
+    LinkEditCBEvent,
+    IconItem
 }
 
+export type IconBarPosition = "tl" | "tr" | "bl" | "br";

@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect } from 'vue';
-import { getFavicon } from '../api/util';
+import { getFavicon } from '../../api/util';
 
 const src = ref('');
 const op = ref(false);

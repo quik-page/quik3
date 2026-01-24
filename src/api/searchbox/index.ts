@@ -1,8 +1,8 @@
 import { h } from "vue";
 import { getValue, setValue } from "../storage"
-import MIcon from "../../components/MIcon.vue";
+import MIcon from "../../components/utils/MIcon.vue";
 import { checkUrl, getRandomCode } from "../util";
-import FavIcon from "../../components/FavIcon.vue";
+import FavIcon from "../../components/utils/FavIcon.vue";
 import { sugCt } from "./searchsug";
 import type { SearchEngines, SugCreator,Sug, ValParser } from "../types";
 

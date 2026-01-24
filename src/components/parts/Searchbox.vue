@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { h, nextTick, ref, watch } from 'vue';
-import MIcon from './MIcon.vue';
-import { checkVal, geneSug, getUserNowEngine, type Sug } from '../api/searchbox';
-import FavIcon from './FavIcon.vue';
-import { debounce } from '../api/util';
-import RawHtm from './rawHtm.vue';
+import MIcon from '@c/utils/MIcon.vue';
+import { checkVal, geneSug, getUserNowEngine, type Sug } from '@a/searchbox';
+import FavIcon from '@c/utils/FavIcon.vue';
+import { debounce } from '@a/util';
+import RawHtm from '@c/utils/rawHtm.vue';
 
 let inpval = ref('');
 let engineIcon = ref(h(FavIcon, { url: getUserNowEngine() }));

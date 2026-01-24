@@ -42,7 +42,7 @@ watch(show, (newVal) => {
 </script>
 
 <style lang="scss">
-@import url(../styles/dialogui.scss);
+@import url(@/styles/dialogui.scss);
 
 .dialog {
     width: 100%;

@@ -15,7 +15,7 @@ const props = defineProps({
     color: { type: String, default: 'currentColor' }
 })
 
-const iconModules = import.meta.glob('../../icons/*.svg');
+const iconModules = import.meta.glob('/icons/*.svg');
 const validIconNames = Object.keys(iconModules).map(path => {
     return path.split('/').pop()?.replace('.svg', '') || '';
 })

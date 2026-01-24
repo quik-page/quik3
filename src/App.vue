@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import Loading from './components/Loading.vue';
-import Main from './components/Main.vue';
+import Loading from './components/parts/Loading.vue';
+import Main from './components/parts/Main.vue';
 import bus from './api/bus';
 let winWidth = ref(window.innerWidth);
 let winHeight = ref(window.innerHeight);

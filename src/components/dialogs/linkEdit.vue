@@ -31,8 +31,8 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect } from 'vue';
-import type { Link, LinkEditCBEvent } from '../../api/types';
-import Dialog from '../Dialog.vue';
+import type { LinkEditCBEvent } from '@/api/types';
+import Dialog from '../utils/Dialog.vue';
 import { getLocalFiles } from '../../api/util';
 const show = defineModel("show", {
     default: false,

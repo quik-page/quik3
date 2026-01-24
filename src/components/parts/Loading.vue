@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts" setup>
-import load from "./load.vue";
+import load from "@c/utils/load.vue";
 const { show = false } = defineProps<{ show?: boolean }>();
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .loading {
     display: flex;
     justify-content: center;

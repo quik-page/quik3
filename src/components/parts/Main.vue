@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Engines from './Engines.vue';
-import Iconbar from './Iconbar.vue';
-import Link from './Links.vue';
+import Iconbar from './Iconbar/Iconbar.vue';
+import Link from './Links/Links.vue';
 import Logo from './Logo.vue';
 import Searchbox from './Searchbox.vue';
 
@@ -22,7 +22,7 @@ import Searchbox from './Searchbox.vue';
 
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .main {
     width: 100%;
     height: 100%;
